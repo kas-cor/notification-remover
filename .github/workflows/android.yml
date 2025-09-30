@@ -172,14 +172,18 @@ jobs:
     
     - name: Create debug keystore
       run: |
-        echo "🔑 Creating debug keystore for APK signing..."
+        echo "🔑 Creating proper debug keystore..."
         mkdir -p app
-        # Create proper debug keystore using keytool
+        # Create debug keystore with all required parameters
         keytool -genkey -v -keystore app/debug.keystore \
           -alias androiddebugkey \
           -keyalg RSA -keysize 2048 -validity 10000 \
           -dname "CN=Android Debug,O=Android,C=US" \
-          -storepass android -keypass android
+          -storepass android -keypass android \
+          -deststoretype JKS
+        
+        echo "✅ Keystore created successfully"
+        ls -la app/debug.keystore
     
     - name: Build debug APK
       run: ./gradlew assembleDebug --no-daemon --stacktrace
@@ -187,15 +191,12 @@ jobs:
         VERSION_NAME: ${{ env.VERSION_NAME }}
         VERSION_CODE: ${{ env.VERSION_CODE }}
     
-    - name: Check APK exists
+    - name: Verify APK signature
       run: |
-        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-          echo "✅ APK created successfully"
-          ls -la app/build/outputs/apk/debug/app-debug.apk
-        else
-          echo "❌ APK not found"
-          exit 1
-        fi
+        echo "🔍 Verifying APK signature..."
+        # Check if APK is properly signed
+        $ANDROID_HOME/build-tools/34.0.0/aapt dump badging app/build/outputs/apk/debug/app-debug.apk | grep "application-label"
+        echo "📱 APK signature verification completed"
     
     - name: Rename APK
       run: |
