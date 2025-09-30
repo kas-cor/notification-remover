@@ -1,0 +1,86 @@
+name: ❓ Question / Support
+description: Ask a question or get help
+title: "[QUESTION] "
+labels: ["question", "needs-response"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question about NotificationRemover? We're here to help! 🤝
+        
+        Please check the documentation first, but don't hesitate to ask if something is unclear.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-question Checklist
+      description: Please confirm you have checked the following
+      options:
+        - label: I have read the README and documentation
+          required: true
+        - label: I have searched existing issues for similar questions
+          required: true
+        - label: I have checked the FAQ section
+          required: false
+
+  - type: dropdown
+    id: question-type
+    attributes:
+      label: 🏷️ Question Type
+      description: What type of question is this?
+      options:
+        - Usage - How to use a feature
+        - Configuration - App setup or settings
+        - Troubleshooting - Something isn't working as expected
+        - Development - Building or modifying the app
+        - General - Other questions
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: ❓ Your Question
+      description: What would you like to know?
+      placeholder: |
+        Please be as specific as possible...
+        
+        For usage questions: What are you trying to accomplish?
+        For troubleshooting: What specific issue are you experiencing?
+        For development: What are you trying to build or modify?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 📋 Context
+      description: Provide any relevant context
+      placeholder: |
+        What you've tried so far...
+        Your current setup...
+        Any error messages...
+        Links to relevant documentation...
+
+  - type: input
+    id: app-version
+    attributes:
+      label: 📱 App Version
+      description: What version are you using? (if applicable)
+      placeholder: e.g., v1.2.0
+
+  - type: input
+    id: android-version
+    attributes:
+      label: 🤖 Android Version
+      description: Your Android version (if applicable)
+      placeholder: e.g., Android 13
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 📝 Additional Information
+      description: Any other details that might be helpful
+      placeholder: Screenshots, logs, or other relevant information...

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "🚀 Building NotificationRemover APK using Docker..."
-echo "=================================================="
+echo "🚀 Building NotificationRemover APK with full Android SDK..."
+echo "============================================================"
 
 # Проверим Docker
 if ! command -v docker &> /dev/null; then
@@ -9,19 +9,19 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Создадим необходимые директории
-mkdir -p app/build/outputs/apk/debug
+echo "🔨 Building Android Docker image..."
+docker build -f Dockerfile.android -t android-build .
 
-# Используем более современный образ Gradle с JDK 17
-echo "📦 Pulling Gradle Docker image..."
-docker pull gradle:8.4-jdk17-alpine
+if [ $? -ne 0 ]; then
+    echo "❌ Failed to build Android Docker image"
+    exit 1
+fi
 
-echo "🔨 Building project..."
+echo "📦 Building APK with Android SDK..."
 docker run --rm \
     -v "$PWD:/project" \
     -w /project \
-    -u $(id -u):$(id -g) \
-    gradle:8.4-jdk17-alpine \
+    android-build \
     ./gradlew clean assembleDebug --no-daemon --stacktrace
 
 if [ $? -eq 0 ]; then
@@ -31,6 +31,8 @@ if [ $? -eq 0 ]; then
     if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
         APK_SIZE=$(du -h app/build/outputs/apk/debug/app-debug.apk | cut -f1)
         echo "📊 APK size: $APK_SIZE"
+        echo "🔍 APK info:"
+        ls -la app/build/outputs/apk/debug/app-debug.apk
     else
         echo "⚠️ APK file not found at expected location"
         find app/build -name "*.apk" 2>/dev/null || echo "No APK files found"

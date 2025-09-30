@@ -1,0 +1,122 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement", "needs-triage"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! 🎉
+        
+        Please search existing issues to make sure this hasn't been requested before.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-flight Checklist
+      description: Please confirm you have completed the following
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I have checked the roadmap for planned features
+          required: true
+        - label: This feature would benefit multiple users, not just me
+          required: true
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: 🤔 Problem Description
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: |
+        I'm always frustrated when...
+        It's difficult to...
+        Users need to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 💡 Proposed Solution
+      description: Describe the solution you'd like to see
+      placeholder: |
+        I would like to see...
+        The app should...
+        Add a feature that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 Alternatives Considered
+      description: Describe any alternative solutions or features you've considered
+      placeholder: |
+        Alternative approach could be...
+        I also considered...
+        Another option would be...
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 📊 Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Would be helpful
+        - Important for my use case
+        - Critical need
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: 🔧 Estimated Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Simple - Small UI change or setting
+        - Medium - New screen or moderate functionality
+        - Complex - Major feature requiring significant work
+        - Unknown - Not sure about complexity
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: 👥 User Stories
+      description: Write user stories for this feature
+      placeholder: |
+        As a user, I want to...
+        As a power user, I need to...
+        As someone who..., I would like to...
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: ✅ Acceptance Criteria
+      description: What would need to be true for this feature to be considered complete?
+      placeholder: |
+        - [ ] The feature should...
+        - [ ] Users can...
+        - [ ] The UI displays...
+        - [ ] Settings are saved...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: 🎨 Mockups / Screenshots
+      description: If you have any mockups, wireframes, or examples, please share them
+      placeholder: Drag and drop images here or paste image URLs
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 📝 Additional Context
+      description: Add any other context, links, or examples about the feature request
+      placeholder: |
+        Similar apps that have this feature...
+        Links to relevant documentation...
+        Any other helpful information...

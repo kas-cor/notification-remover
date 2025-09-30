@@ -1,0 +1,114 @@
+name: Nightly Build
+
+on:
+  schedule:
+    # Run every day at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  nightly-build:
+    name: Nightly Build
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'your-username' # Замените на ваш username
+    
+    steps:
+    - name: Checkout develop branch
+      uses: actions/checkout@v4
+      with:
+        ref: develop
+        fetch-depth: 0
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+    
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Generate nightly version
+      run: |
+        NIGHTLY_VERSION="nightly-$(date +%Y%m%d)"
+        echo "NIGHTLY_VERSION=$NIGHTLY_VERSION" >> $GITHUB_ENV
+        echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+    
+    - name: Update version for nightly
+      run: |
+        sed -i "s/versionName \".*\"/versionName \"$NIGHTLY_VERSION\"/" app/build.gradle
+        sed -i "s/versionCode .*/versionCode $BUILD_NUMBER/" app/build.gradle
+    
+    - name: Build nightly APK
+      run: ./gradlew assembleDebug --no-daemon --stacktrace
+    
+    - name: Rename nightly APK
+      run: |
+        cd app/build/outputs/apk/debug
+        mv app-debug.apk "NotificationRemover-$NIGHTLY_VERSION.apk"
+    
+    - name: Run all tests
+      run: ./gradlew test --no-daemon
+    
+    - name: Run lint
+      run: ./gradlew lint --no-daemon
+    
+    - name: Upload nightly APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: nightly-apk-${{ env.NIGHTLY_VERSION }}
+        path: app/build/outputs/apk/debug/NotificationRemover-*.apk
+        retention-days: 7
+    
+    - name: Create nightly release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.NIGHTLY_VERSION }}
+        name: "Nightly Build ${{ env.NIGHTLY_VERSION }}"
+        body: |
+          🌙 **Nightly Build from develop branch**
+          
+          This is an automated nightly build for testing purposes.
+          
+          **⚠️ Warning**: This build is from the development branch and may be unstable.
+          
+          **📅 Built on**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **🔗 Commit**: ${{ github.sha }}
+          **🌿 Branch**: develop
+          
+          ### 📋 Changes since last nightly:
+          $(git log --oneline --since="24 hours ago" --pretty=format:"- %s" | head -10)
+          
+          ### 🧪 Test this build:
+          1. Download the APK below
+          2. Install on test device
+          3. Report issues in the repository
+          
+          **Not for production use!**
+        files: app/build/outputs/apk/debug/NotificationRemover-*.apk
+        prerelease: true
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Notify team
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        channel: '#dev-notifications'
+        text: |
+          Nightly build ${{ env.NIGHTLY_VERSION }} completed with status: ${{ job.status }}
+          Download: https://github.com/${{ github.repository }}/releases/tag/${{ env.NIGHTLY_VERSION }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

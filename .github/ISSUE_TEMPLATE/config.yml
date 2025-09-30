@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/your-username/NotificationRemover/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 📚 Documentation
+    url: https://github.com/your-username/NotificationRemover/blob/main/README.md
+    about: Check the documentation for setup and usage instructions
+  - name: 🚀 Feature Roadmap
+    url: https://github.com/your-username/NotificationRemover/blob/main/ROADMAP.md
+    about: See planned features and development timeline
