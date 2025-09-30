@@ -174,10 +174,12 @@ jobs:
       run: |
         echo "🔑 Creating debug keystore for APK signing..."
         mkdir -p app
-        # Create debug keystore for CI
-        echo "Debug keystore will be created by GitHub Actions runner"
-        # Note: In a real setup, this would use keytool
-        echo "keystore-placeholder" > app/debug.keystore
+        # Create proper debug keystore using keytool
+        keytool -genkey -v -keystore app/debug.keystore \
+          -alias androiddebugkey \
+          -keyalg RSA -keysize 2048 -validity 10000 \
+          -dname "CN=Android Debug,O=Android,C=US" \
+          -storepass android -keypass android
     
     - name: Build debug APK
       run: ./gradlew assembleDebug --no-daemon --stacktrace
