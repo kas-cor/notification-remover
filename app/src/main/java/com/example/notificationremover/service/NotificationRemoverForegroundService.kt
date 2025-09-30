@@ -76,7 +76,7 @@ class NotificationRemoverForegroundService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Notification Remover Active")
             .setContentText("Monitoring notifications in background")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_notification_clear)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .setSilent(true)
